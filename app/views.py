@@ -73,7 +73,7 @@ def after_login(resp):  #resp包含了openid提供商返回来的信息
 def load_user(id):
     return User.query.get(int(id))
 
-# g.user 全局变量 用来注册登录的用户
+# g.user 全局变量 用来保存当前用户 方便接下来的请求进行验证
 @app.before_request # 每次浏览器在发送请求之前被调用
 def before_request():
     g.user = current_user
@@ -82,6 +82,7 @@ def before_request():
         db.session.add(g.user)
         db.session.commit()
         print '---------before_request()-------'
+        print db.session.add()
 
 # 登出
 @app.route('/logout')
@@ -94,7 +95,7 @@ def logout():
 @login_required
 def user(nickname):
     print '-------User---------'
-    print session
+    print session   #session是个字典，本质是本地加密钥的cookie
     user = User.query.filter_by(nickname = nickname).first()
     if user == None:
         flash('User ' + nickname + ' not found.')
@@ -115,7 +116,7 @@ def edit():
     if form.validate_on_submit():
         g.user.nickname = form.nickname.data
         g.user.about_me = form.about_me.data
-        db.session.add(g.user)
+        db.session.add(g.user)  # add可以进行添加或者更新
         db.session.commit()
         flash('Your changes have been saved.')
         return redirect(url_for('edit'))
