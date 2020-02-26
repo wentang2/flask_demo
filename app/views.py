@@ -82,7 +82,7 @@ def before_request():
         db.session.add(g.user)
         db.session.commit()
         print '---------before_request()-------'
-        print db.session.add()
+        # print db.session.add()
 
 # 登出
 @app.route('/logout')
@@ -124,3 +124,26 @@ def edit():
         form.nickname.data = g.user.nickname
         form.about_me.data = g.user.about_me
     return render_template('edit.html', form=form)
+
+# 测试 url 唯一性
+# 当访问 '/project' 时，会重定向到'/project/' 访问两个都有效
+@app.route('/projects/')    # 结尾带 '/' 
+def projects():
+    return 'The project page'
+
+# 只能访问 '/about' 。如果访问 '/about/'会 报404 not found
+# 避免搜索引擎引同一个页面两次
+@app.route('/about')        #结尾不带 '/'
+def about():
+    return 'The about page'
+
+
+# 定制HTTP错误处理器 404 500
+@app.errorhandler(404)
+def internal_error(error):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    db.session.rollback()   #如果错误是数据库触发，那么数据库会话是不正常的，需要回滚
+    return render_template('500.html'), 500
