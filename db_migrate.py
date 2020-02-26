@@ -1,3 +1,5 @@
+#coding=utf-8
+# 数据库升级脚本
 import imp
 from migrate.versioning import api
 from app import db

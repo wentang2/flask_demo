@@ -46,12 +46,12 @@ from app import views, models
 # 启用日志记录类似于电子邮件发送错误
 if not app.debug:
     import logging
-    from logger.handlers import RotatingFileHandler
+    from logging.handlers import RotatingFileHandler
     # 日志文件保存在tmp目录，叫 microblog.log。 rotatingfilehandler限制日志大小为1M，保留最后10个文件
     file_handler = RotatingFileHandler('tmp/microblog.log', 'a', 1 * 1024 * 1024, 10)
     # logging.formatter 定制化日志信息格式， 时间戳、日志记录级别、消息起源于以及日志消息和堆栈跟踪的文件和行号
     file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
     app.logger.setLevel(logging.INFO)   #设置日志级别为 info
-    file_handler.setLevel(loggin.INFO)
+    file_handler.setLevel(logging.INFO)
     app.logger.addHandler(file_handler) # 添加一个handler
     app.logger.info('microblog startup')
